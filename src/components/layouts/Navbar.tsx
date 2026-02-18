@@ -12,7 +12,7 @@ const Navbar = () => {
     logout();
     setDropdownOpen(false);
     setIsOpen(false);
-    navigate("/login");
+    navigate("/");
   };
 
   return (

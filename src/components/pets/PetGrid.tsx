@@ -1,6 +1,7 @@
 import PetCard from "./PetCard";
+import type { Pet } from "../../api/petApi";
 
-function PetGrid({ pets }: { pets: Array<any> }) {
+function PetGrid({ pets }: { pets: Pet[] }) {
     return (
         <div className="grid gap-6 
                     grid-cols-1 
@@ -14,4 +15,4 @@ function PetGrid({ pets }: { pets: Array<any> }) {
     );
 }
 
-export default PetGrid
+export default PetGrid;

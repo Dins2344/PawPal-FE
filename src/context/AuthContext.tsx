@@ -14,7 +14,7 @@ interface AuthContextType {
     user: User | null;
     token: string | null;
     isLoading: boolean;
-    login: (payload: LoginPayload) => Promise<void>;
+    login: (payload: LoginPayload) => Promise<User>;
     register: (payload: RegisterPayload) => Promise<void>;
     logout: () => void;
 }
@@ -47,12 +47,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }, []);
 
-    const login = async (payload: LoginPayload) => {
+    const login = async (payload: LoginPayload): Promise<User> => {
         const data = await loginUser(payload);
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         setToken(data.token);
         setUser(data.user);
+        return data.user;
     };
 
     const register = async (payload: RegisterPayload) => {

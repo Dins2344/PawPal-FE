@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
+import type { Pet } from "../../api/petApi";
 
-function PetCard({ pet }: { pet: any }) {
+function PetCard({ pet }: { pet: Pet }) {
     return (
         <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition duration-300 overflow-hidden">
 
@@ -12,9 +13,9 @@ function PetCard({ pet }: { pet: any }) {
                 />
 
                 <span className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full 
-          ${pet.status === "Available" && "bg-green-100 text-green-700"}
-          ${pet.status === "Pending" && "bg-yellow-100 text-yellow-700"}
-          ${pet.status === "Adopted" && "bg-red-100 text-red-700"}
+          ${pet.status === "available" && "bg-green-100 text-green-700"}
+          ${pet.status === "pending" && "bg-yellow-100 text-yellow-700"}
+          ${pet.status === "adopted" && "bg-red-100 text-red-700"}
         `}>
                     {pet.status}
                 </span>
@@ -29,12 +30,16 @@ function PetCard({ pet }: { pet: any }) {
                     {pet.breed} • {pet.age} years
                 </p>
 
-                <Link to={`/pets/${pet._id}`} className="w-full block mt-3 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition text-center"> 
+                <Link
+                    to={`/pets/${pet._id}`}
+                    state={{ pet }}
+                    className="w-full block mt-3 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition text-center"
+                >
                     View Details
                 </Link>
             </div>
         </div>
-    )
+    );
 }
 
-export default PetCard
+export default PetCard;

@@ -76,7 +76,7 @@ const Register = () => {
     ];
 
     return (
-        <div className="min-h-[calc(100vh-72px)] flex">
+        <div className="grow flex">
             {/* Left Panel - Form */}
             <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 bg-linear-to-br from-gray-50 to-gray-100">
                 <div className="w-full max-w-md">

@@ -20,9 +20,9 @@ const Login = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await auth.login({ email: form.email, password: form.password });
+            const loggedInUser = await auth.login({ email: form.email, password: form.password });
             toast.success("Login successful! Welcome back 🎉");
-            navigate("/");
+            navigate(loggedInUser.role === "admin" ? "/admin" : "/");
         } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
                 toast.error(err.response?.data?.message || "Invalid email or password.");
@@ -35,7 +35,7 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-[calc(100vh-72px)] flex">
+        <div className="grow flex">
             {/* Left Panel - Illustration */}
             <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700">
                 {/* Decorative circles */}
