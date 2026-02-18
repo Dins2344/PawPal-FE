@@ -1,12 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
 import PetFilters from "../components/pets/PetFilters";
 import PetGrid from "../components/pets/PetGrid";
+import Pagination from "../components/ui/Pagination";
 import { getAllPets, type Pet, type PetFilters as PetFiltersType } from "../api/petApi";
+
+const ITEMS_PER_PAGE = 8;
 
 function Home() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<PetFiltersType>({
     search: "",
     species: "All",
@@ -31,6 +35,11 @@ function Home() {
     fetchPets();
   }, [fetchPets]);
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
   const handleFilterChange = (newFilters: PetFiltersType) => {
     setFilters(newFilters);
   };
@@ -38,6 +47,12 @@ function Home() {
   const handleClearFilters = () => {
     setFilters({ search: "", species: "All", breed: "All", age: "" });
   };
+
+  const totalPages = Math.ceil(pets.length / ITEMS_PER_PAGE);
+  const paginatedPets = pets.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
@@ -93,9 +108,21 @@ function Home() {
             </div>
           )}
 
-          {/* Pet Grid */}
+          {/* Pet Grid + Pagination */}
           {!isLoading && !error && pets.length > 0 && (
-            <PetGrid pets={pets} />
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm text-gray-500">
+                  Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, pets.length)} of {pets.length} pets
+                </p>
+              </div>
+              <PetGrid pets={paginatedPets} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </>
           )}
         </div>
 

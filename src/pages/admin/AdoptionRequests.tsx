@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { useToast } from "../../context/ToastContext";
 import { getAdoptionRequests, approveAdoption, rejectAdoption, type AdoptionRequest } from "../../api/adminApi";
+import Pagination from "../../components/ui/Pagination";
 import axios from "axios";
+
+const ITEMS_PER_PAGE = 6;
 
 const AdoptionRequests = () => {
     const [requests, setRequests] = useState<AdoptionRequest[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
     const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "approved" | "rejected">("all");
+    const [currentPage, setCurrentPage] = useState(1);
     const toast = useToast();
 
     const fetchRequests = async () => {
@@ -29,6 +33,11 @@ const AdoptionRequests = () => {
     useEffect(() => {
         fetchRequests();
     }, []);
+
+    // Reset page when filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterStatus]);
 
     const handleApprove = async (id: string) => {
         setActionLoadingId(id);
@@ -70,6 +79,12 @@ const AdoptionRequests = () => {
 
     const filteredRequests =
         filterStatus === "all" ? requests : requests.filter((r) => r.status === filterStatus);
+
+    const totalPages = Math.ceil(filteredRequests.length / ITEMS_PER_PAGE);
+    const paginatedRequests = filteredRequests.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
 
     const statusBadge = (status: string) => {
         const styles: Record<string, string> = {
@@ -152,71 +167,83 @@ const AdoptionRequests = () => {
 
             {/* Request Cards */}
             {!isLoading && filteredRequests.length > 0 && (
-                <div className="space-y-4">
-                    {filteredRequests.map((req) => (
-                        <div
-                            key={req._id}
-                            className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300"
-                        >
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                {/* Pet Info */}
-                                <div className="flex items-center gap-4 flex-1 min-w-0">
-                                    <img
-                                        src={req.pet.image}
-                                        alt={req.pet.name}
-                                        className="w-16 h-16 rounded-xl object-cover shadow-sm shrink-0"
-                                    />
-                                    <div className="min-w-0">
-                                        <h4 className="font-semibold text-gray-800 truncate">{req.pet.name}</h4>
-                                        <p className="text-sm text-gray-500">{req.pet.breed}</p>
-                                    </div>
-                                </div>
-
-                                {/* Arrow */}
-                                <div className="hidden sm:block text-gray-300 text-2xl">→</div>
-
-                                {/* User Info */}
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="font-semibold text-gray-800 truncate">{req.user.fullName}</h4>
-                                    <p className="text-sm text-gray-500">{req.user.email}</p>
-                                    <p className="text-sm text-gray-400">{req.user.phone}</p>
-                                </div>
-
-                                {/* Status & Actions */}
-                                <div className="flex flex-col items-end gap-3 shrink-0">
-                                    {statusBadge(req.status)}
-
-                                    <div className="text-xs text-gray-400">
-                                        {new Date(req.createdAt).toLocaleDateString("en-US", {
-                                            year: "numeric",
-                                            month: "short",
-                                            day: "numeric",
-                                        })}
-                                    </div>
-
-                                    {req.status === "pending" && (
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() => handleApprove(req._id)}
-                                                disabled={actionLoadingId === req._id}
-                                                className="cursor-pointer px-4 py-2 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                                            >
-                                                {actionLoadingId === req._id ? "..." : "✓ Approve"}
-                                            </button>
-                                            <button
-                                                onClick={() => handleReject(req._id)}
-                                                disabled={actionLoadingId === req._id}
-                                                className="cursor-pointer px-4 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg hover:bg-red-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                                            >
-                                                {actionLoadingId === req._id ? "..." : "✕ Reject"}
-                                            </button>
+                <>
+                    <div className="flex items-center justify-between mb-4">
+                        <p className="text-sm text-gray-500">
+                            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredRequests.length)} of {filteredRequests.length}
+                        </p>
+                    </div>
+                    <div className="space-y-4">
+                        {paginatedRequests.map((req) => (
+                            <div
+                                key={req._id}
+                                className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300"
+                            >
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                                    {/* Pet Info */}
+                                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                                        <img
+                                            src={req.pet.image}
+                                            alt={req.pet.name}
+                                            className="w-16 h-16 rounded-xl object-cover shadow-sm shrink-0"
+                                        />
+                                        <div className="min-w-0">
+                                            <h4 className="font-semibold text-gray-800 truncate">{req.pet.name}</h4>
+                                            <p className="text-sm text-gray-500">{req.pet.breed}</p>
                                         </div>
-                                    )}
+                                    </div>
+
+                                    {/* Arrow */}
+                                    <div className="hidden sm:block text-gray-300 text-2xl">→</div>
+
+                                    {/* User Info */}
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="font-semibold text-gray-800 truncate">{req.user.fullName}</h4>
+                                        <p className="text-sm text-gray-500">{req.user.email}</p>
+                                        <p className="text-sm text-gray-400">{req.user.phone}</p>
+                                    </div>
+
+                                    {/* Status & Actions */}
+                                    <div className="flex flex-col items-end gap-3 shrink-0">
+                                        {statusBadge(req.status)}
+
+                                        <div className="text-xs text-gray-400">
+                                            {new Date(req.createdAt).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "numeric",
+                                            })}
+                                        </div>
+
+                                        {req.status === "pending" && (
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleApprove(req._id)}
+                                                    disabled={actionLoadingId === req._id}
+                                                    className="cursor-pointer px-4 py-2 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                                >
+                                                    {actionLoadingId === req._id ? "..." : "✓ Approve"}
+                                                </button>
+                                                <button
+                                                    onClick={() => handleReject(req._id)}
+                                                    disabled={actionLoadingId === req._id}
+                                                    className="cursor-pointer px-4 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg hover:bg-red-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                                >
+                                                    {actionLoadingId === req._id ? "..." : "✕ Reject"}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
+                </>
             )}
         </div>
     );

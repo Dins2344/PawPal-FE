@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useToast } from "../../context/ToastContext";
 import { getAllPets, deletePet, type Pet } from "../../api/adminApi";
 import EditPetModal from "./EditPetModal";
+import Pagination from "../../components/ui/Pagination";
 import axios from "axios";
+
+const ITEMS_PER_PAGE = 8;
 
 const ManagePets = () => {
     const [pets, setPets] = useState<Pet[]>([]);
@@ -10,6 +13,7 @@ const ManagePets = () => {
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
     const [editingPet, setEditingPet] = useState<Pet | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
     const toast = useToast();
 
     const fetchPets = async () => {
@@ -68,6 +72,19 @@ const ManagePets = () => {
         );
     };
 
+    const totalPages = Math.ceil(pets.length / ITEMS_PER_PAGE);
+    const paginatedPets = pets.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    // Auto-adjust page after deletion
+    useEffect(() => {
+        if (currentPage > 1 && paginatedPets.length === 0) {
+            setCurrentPage((prev) => prev - 1);
+        }
+    }, [pets.length]);
+
     return (
         <div>
             <div className="flex items-center justify-between mb-8">
@@ -105,85 +122,92 @@ const ManagePets = () => {
 
             {/* Pet Table */}
             {!isLoading && pets.length > 0 && (
-                <div className="overflow-x-auto rounded-2xl border border-gray-100">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="bg-gray-50 border-b border-gray-100">
-                                <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Pet</th>
-                                <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Species</th>
-                                <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Breed</th>
-                                <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Age</th>
-                                <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gender</th>
-                                <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-50">
-                            {pets.map((pet) => (
-                                <tr key={pet._id} className="hover:bg-gray-50/50 transition-colors">
-                                    {/* Pet info with image */}
-                                    <td className="px-5 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <img
-                                                src={pet.image}
-                                                alt={pet.name}
-                                                className="w-12 h-12 rounded-xl object-cover shadow-sm shrink-0"
-                                            />
-                                            <div>
-                                                <p className="font-semibold text-gray-800">{pet.name}</p>
-                                                <p className="text-xs text-gray-400">
-                                                    {new Date(pet.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-5 py-4 text-sm text-gray-600">{pet.species}</td>
-                                    <td className="px-5 py-4 text-sm text-gray-600">{pet.breed}</td>
-                                    <td className="px-5 py-4 text-sm text-gray-600">{pet.age} yrs</td>
-                                    <td className="px-5 py-4 text-sm text-gray-600">{pet.gender}</td>
-                                    <td className="px-5 py-4">{statusBadge(pet.status)}</td>
-                                    <td className="px-5 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <button
-                                                onClick={() => setEditingPet(pet)}
-                                                className="cursor-pointer px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-semibold rounded-lg hover:bg-blue-100 transition-colors"
-                                            >
-                                                ✏️ Edit
-                                            </button>
-
-                                            {confirmDeleteId === pet._id ? (
-                                                <>
-                                                    <span className="text-xs text-gray-500 mr-1">Sure?</span>
-                                                    <button
-                                                        onClick={() => handleDelete(pet._id)}
-                                                        disabled={deletingId === pet._id}
-                                                        className="cursor-pointer px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60"
-                                                    >
-                                                        {deletingId === pet._id ? "..." : "Yes"}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setConfirmDeleteId(null)}
-                                                        disabled={deletingId === pet._id}
-                                                        className="cursor-pointer px-3 py-1.5 bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-300 transition-colors"
-                                                    >
-                                                        No
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <button
-                                                    onClick={() => setConfirmDeleteId(pet._id)}
-                                                    className="cursor-pointer px-3 py-1.5 text-red-600 bg-red-50 text-xs font-semibold rounded-lg hover:bg-red-100 transition-colors"
-                                                >
-                                                    🗑 Delete
-                                                </button>
-                                            )}
-                                        </div>
-                                    </td>
+                <>
+                    <div className="overflow-x-auto rounded-2xl border border-gray-100">
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="bg-gray-50 border-b border-gray-100">
+                                    <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Pet</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Species</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Breed</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Age</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gender</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody className="divide-y divide-gray-50">
+                                {paginatedPets.map((pet) => (
+                                    <tr key={pet._id} className="hover:bg-gray-50/50 transition-colors">
+                                        {/* Pet info with image */}
+                                        <td className="px-5 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <img
+                                                    src={pet.image}
+                                                    alt={pet.name}
+                                                    className="w-12 h-12 rounded-xl object-cover shadow-sm shrink-0"
+                                                />
+                                                <div>
+                                                    <p className="font-semibold text-gray-800">{pet.name}</p>
+                                                    <p className="text-xs text-gray-400">
+                                                        {new Date(pet.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-5 py-4 text-sm text-gray-600">{pet.species}</td>
+                                        <td className="px-5 py-4 text-sm text-gray-600">{pet.breed}</td>
+                                        <td className="px-5 py-4 text-sm text-gray-600">{pet.age} yrs</td>
+                                        <td className="px-5 py-4 text-sm text-gray-600">{pet.gender}</td>
+                                        <td className="px-5 py-4">{statusBadge(pet.status)}</td>
+                                        <td className="px-5 py-4 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    onClick={() => setEditingPet(pet)}
+                                                    className="cursor-pointer px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-semibold rounded-lg hover:bg-blue-100 transition-colors"
+                                                >
+                                                    ✏️ Edit
+                                                </button>
+
+                                                {confirmDeleteId === pet._id ? (
+                                                    <>
+                                                        <span className="text-xs text-gray-500 mr-1">Sure?</span>
+                                                        <button
+                                                            onClick={() => handleDelete(pet._id)}
+                                                            disabled={deletingId === pet._id}
+                                                            className="cursor-pointer px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60"
+                                                        >
+                                                            {deletingId === pet._id ? "..." : "Yes"}
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setConfirmDeleteId(null)}
+                                                            disabled={deletingId === pet._id}
+                                                            className="cursor-pointer px-3 py-1.5 bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-300 transition-colors"
+                                                        >
+                                                            No
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => setConfirmDeleteId(pet._id)}
+                                                        className="cursor-pointer px-3 py-1.5 text-red-600 bg-red-50 text-xs font-semibold rounded-lg hover:bg-red-100 transition-colors"
+                                                    >
+                                                        🗑 Delete
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
+                </>
             )}
 
             {/* Edit Modal */}

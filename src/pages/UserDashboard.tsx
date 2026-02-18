@@ -3,7 +3,10 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { getUserAdoptions, withdrawAdoption, type UserAdoptionRequest } from "../api/userApi";
 import { Link } from "react-router-dom";
+import Pagination from "../components/ui/Pagination";
 import axios from "axios";
+
+const ITEMS_PER_PAGE = 6;
 
 const UserDashboard = () => {
     const { user } = useAuth();
@@ -11,6 +14,7 @@ const UserDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [withdrawingId, setWithdrawingId] = useState<string | null>(null);
     const [confirmWithdrawId, setConfirmWithdrawId] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
     const toast = useToast();
 
     const fetchRequests = async () => {
@@ -65,6 +69,19 @@ const UserDashboard = () => {
         );
     };
 
+    const totalPages = Math.ceil(requests.length / ITEMS_PER_PAGE);
+    const paginatedRequests = requests.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    // Reset page if current page goes out of bounds (e.g. after withdraw)
+    useEffect(() => {
+        if (currentPage > 1 && paginatedRequests.length === 0) {
+            setCurrentPage((prev) => prev - 1);
+        }
+    }, [requests.length]);
+
     return (
         <div className="min-h-[calc(100vh-72px)] bg-gray-50 flex flex-col">
             <div className="bg-white border-b border-gray-100 py-8 px-6">
@@ -99,9 +116,12 @@ const UserDashboard = () => {
                     </div>
                 ) : (
                     <div>
-                        <h2 className="text-xl font-bold text-gray-800 mb-6">Your Applications</h2>
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-bold text-gray-800">Your Applications</h2>
+                            <p className="text-sm text-gray-500">{requests.length} total</p>
+                        </div>
                         <div className="grid gap-4">
-                            {requests.map((request) => (
+                            {paginatedRequests.map((request) => (
                                 <div
                                     key={request._id}
                                     className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center gap-6 hover:shadow-md transition-shadow"
@@ -157,6 +177,11 @@ const UserDashboard = () => {
                                 </div>
                             ))}
                         </div>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                        />
                     </div>
                 )}
             </div>
