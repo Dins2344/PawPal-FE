@@ -88,9 +88,8 @@ const AddPet = () => {
             formData.append("image", imageFile);
 
             const data = await addPet(formData);
-            toast.success(data.message || "Pet added successfully! 🐾");
+            toast.success(data.message || "Pet added successfully!");
 
-            // Reset form
             setForm({ name: "", species: "Dog", breed: "", age: "", gender: "Male", description: "" });
             removeImage();
         } catch (err: unknown) {
@@ -104,6 +103,9 @@ const AddPet = () => {
         }
     };
 
+    const inputClass = "w-full px-4 py-3 bg-amber-50/50 border border-amber-200/50 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 transition-all duration-300";
+    const selectClass = `${inputClass} appearance-none cursor-pointer`;
+
     return (
         <div>
             <div className="mb-8">
@@ -116,7 +118,7 @@ const AddPet = () => {
                     {/* Left Column — Image Upload */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Pet Photo <span className="text-red-500">*</span>
+                            Pet Photo <span className="text-rose-500">*</span>
                         </label>
 
                         <div
@@ -126,29 +128,22 @@ const AddPet = () => {
                             onDrop={handleDrop}
                             onClick={() => fileInputRef.current?.click()}
                             className={`relative cursor-pointer border-2 border-dashed rounded-2xl transition-all duration-300 overflow-hidden ${dragActive
-                                    ? "border-blue-500 bg-blue-50"
-                                    : imagePreview
-                                        ? "border-green-400 bg-green-50/30"
-                                        : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+                                ? "border-amber-500 bg-amber-50"
+                                : imagePreview
+                                    ? "border-emerald-400 bg-emerald-50/30"
+                                    : "border-amber-300 hover:border-amber-400 hover:bg-amber-50/50"
                                 }`}
                         >
                             {imagePreview ? (
                                 <div className="relative group">
-                                    <img
-                                        src={imagePreview}
-                                        alt="Pet preview"
-                                        className="w-full h-72 object-cover"
-                                    />
+                                    <img src={imagePreview} alt="Pet preview" className="w-full h-72 object-cover" />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <span className="text-white text-sm font-medium">Click to change</span>
                                     </div>
                                     <button
                                         type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            removeImage();
-                                        }}
-                                        className="absolute top-3 right-3 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                                        onClick={(e) => { e.stopPropagation(); removeImage(); }}
+                                        className="absolute top-3 right-3 bg-rose-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:bg-rose-600 transition-colors"
                                     >
                                         ✕
                                     </button>
@@ -158,7 +153,7 @@ const AddPet = () => {
                                     <div className="text-5xl mb-4">📷</div>
                                     <p className="text-gray-600 font-medium">
                                         Drag & drop an image here, or{" "}
-                                        <span className="text-blue-600">browse</span>
+                                        <span className="text-amber-600 font-semibold">browse</span>
                                     </p>
                                     <p className="text-xs text-gray-400 mt-2">PNG, JPG, JPEG up to 5MB</p>
                                 </div>
@@ -176,10 +171,9 @@ const AddPet = () => {
 
                     {/* Right Column — Form Fields */}
                     <div className="space-y-5">
-                        {/* Pet Name */}
                         <div>
                             <label htmlFor="add-pet-name" className="block text-sm font-semibold text-gray-700 mb-2">
-                                Pet Name <span className="text-red-500">*</span>
+                                Pet Name <span className="text-rose-500">*</span>
                             </label>
                             <input
                                 id="add-pet-name"
@@ -189,23 +183,16 @@ const AddPet = () => {
                                 onChange={handleChange}
                                 placeholder="e.g. Buddy"
                                 required
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all duration-300"
+                                className={inputClass}
                             />
                         </div>
 
-                        {/* Species & Breed */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="add-pet-species" className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Species <span className="text-red-500">*</span>
+                                    Species <span className="text-rose-500">*</span>
                                 </label>
-                                <select
-                                    id="add-pet-species"
-                                    name="species"
-                                    value={form.species}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all duration-300 appearance-none cursor-pointer"
-                                >
+                                <select id="add-pet-species" name="species" value={form.species} onChange={handleChange} className={selectClass}>
                                     <option value="Dog">🐶 Dog</option>
                                     <option value="Cat">🐱 Cat</option>
                                     <option value="Bird">🐦 Bird</option>
@@ -217,7 +204,7 @@ const AddPet = () => {
 
                             <div>
                                 <label htmlFor="add-pet-breed" className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Breed <span className="text-red-500">*</span>
+                                    Breed <span className="text-rose-500">*</span>
                                 </label>
                                 <input
                                     id="add-pet-breed"
@@ -227,16 +214,15 @@ const AddPet = () => {
                                     onChange={handleChange}
                                     placeholder="e.g. Golden Retriever"
                                     required
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all duration-300"
+                                    className={inputClass}
                                 />
                             </div>
                         </div>
 
-                        {/* Age & Gender */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="add-pet-age" className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Age (years) <span className="text-red-500">*</span>
+                                    Age (years) <span className="text-rose-500">*</span>
                                 </label>
                                 <input
                                     id="add-pet-age"
@@ -248,28 +234,21 @@ const AddPet = () => {
                                     required
                                     min="0"
                                     max="30"
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all duration-300"
+                                    className={inputClass}
                                 />
                             </div>
 
                             <div>
                                 <label htmlFor="add-pet-gender" className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Gender <span className="text-red-500">*</span>
+                                    Gender <span className="text-rose-500">*</span>
                                 </label>
-                                <select
-                                    id="add-pet-gender"
-                                    name="gender"
-                                    value={form.gender}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all duration-300 appearance-none cursor-pointer"
-                                >
+                                <select id="add-pet-gender" name="gender" value={form.gender} onChange={handleChange} className={selectClass}>
                                     <option value="Male">♂️ Male</option>
                                     <option value="Female">♀️ Female</option>
                                 </select>
                             </div>
                         </div>
 
-                        {/* Description */}
                         <div>
                             <label htmlFor="add-pet-desc" className="block text-sm font-semibold text-gray-700 mb-2">
                                 Description
@@ -281,7 +260,7 @@ const AddPet = () => {
                                 onChange={handleChange}
                                 placeholder="Tell us about this pet's personality, health, and any special needs..."
                                 rows={4}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all duration-300 resize-none"
+                                className={`${inputClass} resize-none`}
                             />
                         </div>
                     </div>
@@ -292,7 +271,7 @@ const AddPet = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="cursor-pointer px-8 py-3.5 bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center gap-2"
+                        className="cursor-pointer px-8 py-3.5 bg-linear-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center gap-2"
                     >
                         {isLoading ? (
                             <>

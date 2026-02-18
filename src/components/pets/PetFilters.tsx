@@ -27,7 +27,6 @@ function PetFilters({ filters, onFilterChange, onClear }: PetFiltersProps) {
     };
 
     const handleSpeciesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        // Clear breed when species changes as breeds are likely species-specific (though API returns all for now)
         onFilterChange({ ...filters, species: e.target.value, breed: "All" });
     };
 
@@ -41,8 +40,11 @@ function PetFilters({ filters, onFilterChange, onClear }: PetFiltersProps) {
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm space-y-6">
-            <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-amber-100/40 space-y-5">
+            <div className="flex items-center gap-2">
+                <span className="text-lg">🔍</span>
+                <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
+            </div>
 
             <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-600">Search</label>
@@ -51,7 +53,7 @@ function PetFilters({ filters, onFilterChange, onClear }: PetFiltersProps) {
                     placeholder="Search by name..."
                     value={filters.search || ""}
                     onChange={handleSearchChange}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-amber-50/50 border border-amber-200/50 rounded-xl focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 outline-none transition-all placeholder-gray-400"
                 />
             </div>
 
@@ -60,7 +62,7 @@ function PetFilters({ filters, onFilterChange, onClear }: PetFiltersProps) {
                 <select
                     value={filters.species || "All"}
                     onChange={handleSpeciesChange}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none cursor-pointer appearance-none transition-all"
+                    className="w-full px-4 py-2.5 bg-amber-50/50 border border-amber-200/50 rounded-xl focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 outline-none cursor-pointer appearance-none transition-all"
                 >
                     <option value="All">All Species</option>
                     <option value="Dog">🐶 Dog</option>
@@ -77,7 +79,7 @@ function PetFilters({ filters, onFilterChange, onClear }: PetFiltersProps) {
                 <select
                     value={filters.breed || "All"}
                     onChange={handleBreedChange}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none cursor-pointer appearance-none transition-all disabled:opacity-50"
+                    className="w-full px-4 py-2.5 bg-amber-50/50 border border-amber-200/50 rounded-xl focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 outline-none cursor-pointer appearance-none transition-all disabled:opacity-50"
                     disabled={breeds.length === 0}
                 >
                     <option value="All">All Breeds</option>
@@ -97,13 +99,13 @@ function PetFilters({ filters, onFilterChange, onClear }: PetFiltersProps) {
                     placeholder="e.g. 2"
                     value={filters.age || ""}
                     onChange={handleAgeChange}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-amber-50/50 border border-amber-200/50 rounded-xl focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 outline-none transition-all placeholder-gray-400"
                 />
             </div>
 
             <button
                 onClick={onClear}
-                className="w-full mt-4 py-2.5 bg-gray-100 text-gray-600 font-medium rounded-xl hover:bg-gray-200 hover:text-gray-800 transition-colors cursor-pointer"
+                className="w-full mt-2 py-2.5 bg-amber-50 text-amber-700 font-medium rounded-xl hover:bg-amber-100 transition-colors cursor-pointer border border-amber-200/50"
             >
                 Clear Filters
             </button>

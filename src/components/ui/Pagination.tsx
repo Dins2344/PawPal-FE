@@ -33,7 +33,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                className="px-3 py-2 text-sm font-medium rounded-lg border border-amber-200/60 text-amber-700 hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
                 ← Prev
             </button>
@@ -49,8 +49,8 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
                         key={page}
                         onClick={() => onPageChange(page)}
                         className={`w-9 h-9 text-sm font-medium rounded-lg transition-all cursor-pointer ${currentPage === page
-                                ? "bg-blue-600 text-white shadow-md shadow-blue-500/25"
-                                : "text-gray-600 hover:bg-gray-100 border border-gray-200"
+                                ? "bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-500/25"
+                                : "text-gray-600 hover:bg-amber-50 hover:text-amber-700 border border-amber-200/40"
                             }`}
                     >
                         {page}
@@ -62,7 +62,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                className="px-3 py-2 text-sm font-medium rounded-lg border border-amber-200/60 text-amber-700 hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
                 Next →
             </button>

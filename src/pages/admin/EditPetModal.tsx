@@ -26,7 +26,6 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const toast = useToast();
 
-    // Prevent scrolling when modal is open
     useEffect(() => {
         document.body.style.overflow = "hidden";
         return () => {
@@ -80,7 +79,6 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
 
     const removeImage = () => {
         setImageFile(null);
-        // Revert to original image if available, else null
         setImagePreview(pet.image);
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
@@ -102,7 +100,7 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
             }
 
             const data = await updatePet(pet._id, formData);
-            toast.success(data.message || "Pet updated successfully! 🎉");
+            toast.success(data.message || "Pet updated successfully!");
             onSuccess(data.pet);
         } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
@@ -115,6 +113,9 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
         }
     };
 
+    const inputClass = "w-full px-4 py-2.5 bg-amber-50/50 border border-amber-200/50 rounded-xl focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 outline-none transition-all";
+    const selectClass = `${inputClass} appearance-none cursor-pointer`;
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
             {/* Backdrop */}
@@ -124,23 +125,23 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
             />
 
             {/* Modal Card */}
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="relative bg-white rounded-2xl shadow-2xl shadow-amber-100/50 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden border border-amber-100/30">
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <div className="px-6 py-4 border-b border-amber-100/50 flex items-center justify-between bg-linear-to-r from-amber-50/50 to-orange-50/30">
                     <div>
                         <h2 className="text-xl font-bold text-gray-800">Edit Pet Details</h2>
-                        <p className="text-sm text-gray-500">Updating information for {pet.name}</p>
+                        <p className="text-sm text-gray-500">Updating information for <span className="font-medium text-amber-700">{pet.name}</span></p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-800 transition-colors"
+                        className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors cursor-pointer shadow-sm"
                     >
                         ✕
                     </button>
                 </div>
 
-                {/* Form Content - Scrollable */}
-                <div className="p-6 overflow-y-auto custom-scrollbar">
+                {/* Form Content */}
+                <div className="p-6 overflow-y-auto">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* Left Column — Image Upload */}
@@ -156,28 +157,21 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
                                     onDrop={handleDrop}
                                     onClick={() => fileInputRef.current?.click()}
                                     className={`relative cursor-pointer border-2 border-dashed rounded-2xl transition-all duration-300 overflow-hidden h-64 ${dragActive
-                                        ? "border-blue-500 bg-blue-50"
-                                        : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+                                        ? "border-amber-500 bg-amber-50"
+                                        : "border-amber-300 hover:border-amber-400 hover:bg-amber-50/50"
                                         }`}
                                 >
                                     {imagePreview ? (
                                         <div className="relative h-full group">
-                                            <img
-                                                src={imagePreview}
-                                                alt="Pet preview"
-                                                className="w-full h-full object-cover"
-                                            />
+                                            <img src={imagePreview} alt="Pet preview" className="w-full h-full object-cover" />
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                 <span className="text-white text-sm font-medium">Click to change</span>
                                             </div>
                                             {imageFile && (
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        removeImage();
-                                                    }}
-                                                    className="absolute top-2 right-2 bg-white text-red-500 w-7 h-7 rounded-full flex items-center justify-center shadow-lg hover:bg-red-50 transition-colors"
+                                                    onClick={(e) => { e.stopPropagation(); removeImage(); }}
+                                                    className="absolute top-2 right-2 bg-white text-amber-600 w-7 h-7 rounded-full flex items-center justify-center shadow-lg hover:bg-amber-50 transition-colors"
                                                     title="Revert to original"
                                                 >
                                                     ↩
@@ -208,35 +202,19 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
 
                             {/* Right Column — Form Fields */}
                             <div className="space-y-4">
-                                {/* Pet Name */}
                                 <div>
                                     <label htmlFor="edit-name" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                        Pet Name <span className="text-red-500">*</span>
+                                        Pet Name <span className="text-rose-500">*</span>
                                     </label>
-                                    <input
-                                        id="edit-name"
-                                        type="text"
-                                        name="name"
-                                        value={form.name}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none transition-all"
-                                    />
+                                    <input id="edit-name" type="text" name="name" value={form.name} onChange={handleChange} required className={inputClass} />
                                 </div>
 
-                                {/* Species & Breed */}
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
                                         <label htmlFor="edit-species" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                            Species <span className="text-red-500">*</span>
+                                            Species <span className="text-rose-500">*</span>
                                         </label>
-                                        <select
-                                            id="edit-species"
-                                            name="species"
-                                            value={form.species}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 outline-none appearance-none"
-                                        >
+                                        <select id="edit-species" name="species" value={form.species} onChange={handleChange} className={selectClass}>
                                             <option value="Dog">🐶 Dog</option>
                                             <option value="Cat">🐱 Cat</option>
                                             <option value="Bird">🐦 Bird</option>
@@ -248,50 +226,25 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
 
                                     <div>
                                         <label htmlFor="edit-breed" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                            Breed <span className="text-red-500">*</span>
+                                            Breed <span className="text-rose-500">*</span>
                                         </label>
-                                        <input
-                                            id="edit-breed"
-                                            type="text"
-                                            name="breed"
-                                            value={form.breed}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 outline-none transition-all"
-                                        />
+                                        <input id="edit-breed" type="text" name="breed" value={form.breed} onChange={handleChange} required className={inputClass} />
                                     </div>
                                 </div>
 
-                                {/* Age & Gender */}
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
                                         <label htmlFor="edit-age" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                            Age (years) <span className="text-red-500">*</span>
+                                            Age (years) <span className="text-rose-500">*</span>
                                         </label>
-                                        <input
-                                            id="edit-age"
-                                            type="number"
-                                            name="age"
-                                            value={form.age}
-                                            onChange={handleChange}
-                                            required
-                                            min="0"
-                                            max="30"
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 outline-none transition-all"
-                                        />
+                                        <input id="edit-age" type="number" name="age" value={form.age} onChange={handleChange} required min="0" max="30" className={inputClass} />
                                     </div>
 
                                     <div>
                                         <label htmlFor="edit-gender" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                            Gender <span className="text-red-500">*</span>
+                                            Gender <span className="text-rose-500">*</span>
                                         </label>
-                                        <select
-                                            id="edit-gender"
-                                            name="gender"
-                                            value={form.gender}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 outline-none appearance-none"
-                                        >
+                                        <select id="edit-gender" name="gender" value={form.gender} onChange={handleChange} className={selectClass}>
                                             <option value="Male">♂️ Male</option>
                                             <option value="Female">♀️ Female</option>
                                         </select>
@@ -300,15 +253,9 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
                                     {/* Status */}
                                     <div className="col-span-2">
                                         <label htmlFor="edit-status" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                            Status <span className="text-red-500">*</span>
+                                            Status <span className="text-rose-500">*</span>
                                         </label>
-                                        <select
-                                            id="edit-status"
-                                            name="status"
-                                            value={form.status}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 outline-none appearance-none"
-                                        >
+                                        <select id="edit-status" name="status" value={form.status} onChange={handleChange} className={selectClass}>
                                             <option value="available">Available</option>
                                             <option value="pending">Pending</option>
                                             <option value="adopted">Adopted</option>
@@ -316,36 +263,28 @@ const EditPetModal: React.FC<EditPetModalProps> = ({ pet, onClose, onSuccess }) 
                                     </div>
                                 </div>
 
-                                {/* Description */}
                                 <div>
                                     <label htmlFor="edit-desc" className="block text-sm font-semibold text-gray-700 mb-1.5">
                                         Description
                                     </label>
-                                    <textarea
-                                        id="edit-desc"
-                                        name="description"
-                                        value={form.description}
-                                        onChange={handleChange}
-                                        rows={3}
-                                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/40 outline-none transition-all resize-none"
-                                    />
+                                    <textarea id="edit-desc" name="description" value={form.description} onChange={handleChange} rows={3} className={`${inputClass} resize-none`} />
                                 </div>
                             </div>
                         </div>
 
                         {/* Footer Buttons */}
-                        <div className="border-t border-gray-100 pt-6 flex justify-end gap-3">
+                        <div className="border-t border-amber-100/50 pt-6 flex justify-end gap-3">
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors"
+                                className="px-6 py-2.5 rounded-xl border border-amber-200/50 text-gray-600 font-medium hover:bg-amber-50 transition-colors cursor-pointer"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="px-8 py-2.5 bg-blue-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 hover:bg-blue-700 transition-all disabled:opacity-70 flex items-center gap-2"
+                                className="px-8 py-2.5 bg-linear-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/25 hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-70 flex items-center gap-2 cursor-pointer"
                             >
                                 {isLoading ? (
                                     <>

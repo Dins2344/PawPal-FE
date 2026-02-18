@@ -17,7 +17,7 @@ const AdminDashboard = () => {
     ];
 
     return (
-        <div className="h-full bg-gray-50">
+        <div className="h-full">
             <div className="max-w-7xl mx-auto px-6 py-8">
                 {/* Header */}
                 <div className="mb-8">
@@ -25,10 +25,10 @@ const AdminDashboard = () => {
                         <div>
                             <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
                             <p className="text-gray-500 mt-1">
-                                Welcome back, <span className="font-medium text-gray-700">{user?.fullName}</span>
+                                Welcome back, <span className="font-medium text-amber-700">{user?.fullName}</span>
                             </p>
                         </div>
-                        <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-xl text-sm font-medium">
+                        <div className="flex items-center gap-2 bg-amber-50 text-amber-700 px-4 py-2 rounded-xl text-sm font-medium border border-amber-200/50">
                             <span>🛡️</span> Administrator
                         </div>
                     </div>
@@ -37,8 +37,8 @@ const AdminDashboard = () => {
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Sidebar */}
                     <aside className="lg:w-64 shrink-0">
-                        <nav className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
-                            <div className="p-4 bg-linear-to-br from-blue-600 to-indigo-600 text-white">
+                        <nav className="bg-white rounded-2xl shadow-sm border border-amber-100/40 overflow-hidden sticky top-24">
+                            <div className="p-4 bg-linear-to-br from-amber-500 to-orange-500 text-white">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">
                                         ⚙️
@@ -56,14 +56,14 @@ const AdminDashboard = () => {
                                         key={tab.key}
                                         onClick={() => setActiveTab(tab.key)}
                                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mb-1 cursor-pointer ${activeTab === tab.key
-                                            ? "bg-blue-50 text-blue-700"
-                                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+                                            ? "bg-amber-50 text-amber-700 border border-amber-200/50"
+                                            : "text-gray-600 hover:bg-amber-50/50 hover:text-amber-700"
                                             }`}
                                     >
                                         <span className="text-lg">{tab.icon}</span>
                                         {tab.label}
                                         {activeTab === tab.key && (
-                                            <div className="ml-auto w-1.5 h-1.5 bg-blue-600 rounded-full" />
+                                            <div className="ml-auto w-1.5 h-1.5 bg-amber-500 rounded-full" />
                                         )}
                                     </button>
                                 ))}
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
 
                     {/* Main Content */}
                     <main className="flex-1 min-w-0">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+                        <div className="bg-white rounded-2xl shadow-sm border border-amber-100/40 p-6 lg:p-8">
                             {activeTab === "add-pet" && <AddPet />}
                             {activeTab === "manage-pets" && <ManagePets />}
                             {activeTab === "adoptions" && <AdoptionRequests />}

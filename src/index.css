@@ -1,1 +1,44 @@
 @import "tailwindcss";
+
+/* ─── Custom Warm Pet Theme ─────────────────────────────────────────────── */
+
+body {
+    background-color: #FFFBF5;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Warm scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #fef3c7;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d97706;
+    border-radius: 100px;
+}
+
+/* Custom utility for warm bg */
+.bg-warm {
+    background-color: #FFFBF5;
+}
+
+/* Toast slide-in animation */
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+}
