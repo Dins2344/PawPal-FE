@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function PetCard({ pet }: { pet: any }) {
     return (
         <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition duration-300 overflow-hidden">
@@ -27,9 +29,9 @@ function PetCard({ pet }: { pet: any }) {
                     {pet.breed} • {pet.age} years
                 </p>
 
-                <button className="w-full mt-3 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition">
+                <Link to={`/pets/${pet._id}`} className="w-full block mt-3 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition text-center"> 
                     View Details
-                </button>
+                </Link>
             </div>
         </div>
     )
